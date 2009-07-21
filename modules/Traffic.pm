@@ -80,6 +80,8 @@ sub help {
     my @swaps = (
         [ qr/\bblocking\b/, 'blogging' ],
         [ qr/\bplan accordingly\b/, 'play accordian' ],
+        [ qr/roadwork/, 'Men at Work' ],
+        [ qr/maintenance/, 'Men at Work' ],
     );
 
     sub _get_swaps {
