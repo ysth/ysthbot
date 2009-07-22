@@ -25,8 +25,13 @@ sub _get_incidents {
         qr/^Current Operator ?:/,
         qr/^Northwest Region Traffic Systems Management Center, WSDOT/;
 
-    if ($explicit) { s/\bBLOCKING\b/BLOGGING/g, s/\bPLAN ACCORDINGLY\b/PLAY ACCORDIAN/g for @incidents }
-    if ($explicit) { s/\bblocking\b/blogging/g, s/\bplan accordingly\b/play accordian/g for @incidents }
+    if ($explicit) {
+        for (@incidents) {
+            for my $swap ( _get_swaps() ) {
+                s/$swap->{'pattern'}/$swap->{'replacement'}/g
+            }
+        }
+    }
 
     @incidents = "No incidents." if ! @incidents;
 
@@ -71,4 +76,17 @@ sub help {
     return "Commands: 'traffic'";
 }
 
+{
+    my @swaps = (
+        [ qr/\bblocking\b/, 'blogging' ],
+        [ qr/\bplan accordingly\b/, 'play accordian' ],
+    );
+
+    sub _get_swaps {
+        return map {
+            +{    $_->[0]  =>    $_->[1]  },
+            +{ uc($_->[0]) => uc($_->[1]) },
+        } @swaps;
+    }
+}
 1;
