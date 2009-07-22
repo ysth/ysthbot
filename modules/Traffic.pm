@@ -78,16 +78,20 @@ sub help {
 
 {
     my @swaps = (
-        [ q/\bblocking\b/, 'blogging' ],
-        [ q/\bplan accordingly\b/, 'play accordian' ],
-        [ q/\broadwork\b/, 'Men at Work' ],
-        [ q/\bmaintenance\b/, 'Men at Work' ],
+        # pattern, replacement, exact only
+        [ q/\bblocking\b/, 'blogging', ],
+        [ q/\bplan accordingly\b/, 'play accordian', ],
+        [ q/\broadwork\b/, 'Men at Work', ],
+        [ q/\bmaintenance\b/, 'Men at Work', ],
     );
 
     sub _get_swaps {
         return map {
-            +{ 'pattern' => qr/$_->[0]/ , 'replacement' => $_->[1]  },
-            +{ 'pattern' => qr/$_->[0]/i, 'replacement' => uc($_->[1]) },
+            ( { 'pattern' => qr/$_->[0]/ , 'replacement' => $_->[1]  },
+                $_->[2]  # special "exact" flag
+                    ? () # empty list
+                    : +{ 'pattern' => qr/$_->[0]/i, 'replacement' => uc($_->[1]) },
+            )
         } @swaps;
     }
 }
