@@ -78,16 +78,16 @@ sub help {
 
 {
     my @swaps = (
-        [ qr/\bblocking\b/, 'blogging' ],
-        [ qr/\bplan accordingly\b/, 'play accordian' ],
-        [ qr/roadwork/, 'Men at Work' ],
-        [ qr/maintenance/, 'Men at Work' ],
+        [ q/\bblocking\b/, 'blogging' ],
+        [ q/\bplan accordingly\b/, 'play accordian' ],
+        [ q/\broadwork\b/, 'Men at Work' ],
+        [ q/\bmaintenance\b/, 'Men at Work' ],
     );
 
     sub _get_swaps {
         return map {
-            +{    $_->[0]  =>    $_->[1]  },
-            +{ uc($_->[0]) => uc($_->[1]) },
+            +{ 'pattern' => qr/$_->[0]/ , 'replacement' => $_->[1]  },
+            +{ 'pattern' => qr/$_->[0]/i, 'replacement' => uc($_->[1]) },
         } @swaps;
     }
 }
