@@ -87,7 +87,7 @@ sub help {
 
     sub _get_swaps {
         return map {
-            ( { 'pattern' => qr/$_->[0]/ , 'replacement' => $_->[1]  },
+            ( +{ 'pattern' => qr/$_->[0]/ , 'replacement' => $_->[1]  },
                 $_->[2]  # special "exact" flag
                     ? () # empty list
                     : +{ 'pattern' => qr/$_->[0]/i, 'replacement' => uc($_->[1]) },
