@@ -5,7 +5,7 @@ use warnings;
 use LWP::Simple "get";
 use Time::Local "timelocal";
 
-use Bot::BasicBot::Pluggable::Module; 
+use Bot::BasicBot::Pluggable::Module;
 BEGIN { our @ISA = qw(Bot::BasicBot::Pluggable::Module); }
 
 sub _get_incidents {
@@ -46,12 +46,12 @@ sub _next_alert {
 
     return $next;
 }
-    
-sub said { 
+
+sub said {
     my ($self, $mess, $pri) = @_;
     return if $pri != 2;
 
-    my $body = $mess->{body}; 
+    my $body = $mess->{body};
     return if $body !~ /^traffic\b/;
 
     _get_incidents(1);
