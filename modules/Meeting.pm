@@ -5,10 +5,10 @@ use warnings;
 #use LWP::Simple "get";
 #use Time::Local "timelocal";
 
-use Bot::BasicBot::Pluggable::Module; 
+use Bot::BasicBot::Pluggable::Module;
 BEGIN { our @ISA = qw(Bot::BasicBot::Pluggable::Module); }
 
-sub said { 
+sub said {
     my ($self, $mess, $pri) = @_;
     return if $pri != 2;
 
@@ -26,7 +26,7 @@ sub tick {
     my $meeting = $self->get("user_meeting_time");
     return unless $meeting && $meeting > time();
     my $log = int(log($meeting-time())/log(2));
-    
+
     if ($log != $last_log) {
         $self->say(channel => "#spqr", body => $self->get("user_meeting_name") . " in " . ($meeting-time()) . " seconds" ) if $last_log != -1;
         $last_log = $log;
