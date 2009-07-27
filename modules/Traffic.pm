@@ -80,7 +80,7 @@ sub help {
     my @swaps = (
         # pattern, replacement, exact only
         [ q/\bblocking\b/, 'blogging', ],
-        [ q/\bplan accordingly\b/, 'play accordian', ],
+        [ q/\bplan accordingly\b/, 'play accordion', ],
         [ q/\broadwork\b/, 'Men at Work', ],
         [ q/\bmaintenance\b/, 'Men at Work', ],
     );
