@@ -83,6 +83,7 @@ sub help {
         [ q/\bplan accordingly\b/, 'play accordion', ],
         [ q/\broadwork\b/, 'men at work', ],
         [ q/\bmaintenance\b/, 'men at work', ],
+        [ q/\bverified with camera\b/, 'verified with Gamera' ],
     );
 
     sub _get_swaps {
