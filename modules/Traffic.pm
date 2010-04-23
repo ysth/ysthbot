@@ -14,28 +14,38 @@ sub _get_incidents {
     # TODO: If-Modified-Since
     my $report = get("http://www.wsdot.wa.gov/traffic/seattle/incidents/");
 
-    ($report) = $report =~ m:Seattle Area Incidents</span></h2>\s+<p><p>(.*?)</p>(?!<p>):s
+    ($report) = $report =~ m!(<p>Seattle area alerts for .*?)</div>!s
         or return "traffic parse error: incidents not found";
 
-    my @incidents = grep length, split m!</p>\s*<p>\s*!, $report;
+	my ($title,@types) = $report =~ m!<p[^>]*>([^<]*)</p>!gs;
 
-    shift @incidents while @incidents && grep $incidents[0] =~ $_,
-        qr/^Seattle Area -/,
-        qr/^INCIDENT INFORMATION /,
-        qr/^Current Operator ?:/,
-        qr/^Northwest Region Traffic Systems Management Center, WSDOT/;
+	$title =~ s/(area) (alerts)/$1 traffic $2/;
 
-    if ($explicit) {
-        for (@incidents) {
-            for my $swap ( _get_swaps() ) {
-                s/$swap->{'pattern'}/$swap->{'replacement'}/g
-            }
-        }
-    }
+	my %reports;
+	for my $list ( $report =~ m!<ul>(.*?)</ul>!gs ) {
+		my $type = shift @types; # pull off the first type
+		my @incidents = $list =~ m!<li>(.*?)</li>!gs;
+		$reports{$type} = \@incidents;
+		push @types, $type;      # push it back on to the list
+	}
 
-    @incidents = "No incidents." if ! @incidents;
+	# make a report kind of like so:
+	# Seattle area traffic reports for MM/DD/YYY HH:MM AMPM
+	# Blocking Incidents
+	#   * None reported
+	# Construction Closures
+	#   * US99 viaduct closed
+	# Special Events
+	#   * OMG! IT'S THE MARINERS! RUN FOR YOUR LIVES!
+	my $msg = join("\n", $title,  map { $_, map { '  * '.$_ } @{ $reports{$_} } } @types );
 
-    return join "\n", @incidents;
+	if ($explicit) {
+		for my $swap ( _get_swaps() ) {
+			$msg =~ s/$swap->{'pattern'}/$swap->{'replacement'}/g
+		}
+	}
+
+    return $msg;
 }
 
 sub _next_alert {
