@@ -25,6 +25,7 @@ sub _get_incidents {
 	for my $list ( $report =~ m!<ul>(.*?)</ul>!gs ) {
 		my $type = shift @types; # pull off the first type
 		my @incidents = $list =~ m!<li>(.*?)</li>!gs;
+		next if $incidents[0] eq 'None reported';
 		$reports{$type} = \@incidents;
 		push @types, $type;      # push it back on to the list
 	}
@@ -37,7 +38,9 @@ sub _get_incidents {
 	#   * US99 viaduct closed
 	# Special Events
 	#   * OMG! IT'S THE MARINERS! RUN FOR YOUR LIVES!
-	my $msg = join("\n", $title,  map { $_, map { '  * '.$_ } @{ $reports{$_} } } @types );
+	my $msg = (keys %reports)
+		? join("\n", $title,  map { $_, map { '  * '.$_ } @{ $reports{$_} } } @types )
+		: "$title\nNothing to report";
 
 	if ($explicit) {
 		for my $swap ( _get_swaps() ) {
