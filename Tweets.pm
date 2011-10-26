@@ -24,7 +24,7 @@ sub said {
     my $tweet_json = LWP::Simple::get( $url );
 #    warn $tweet_json;
 
-    my $tweet = JSON::XS->decode( $tweet_json );
+    my $tweet = JSON::XS::decode_json( $tweet_json );
 
     return sprintf( $response, $tweet->{user}{screen_name}, $tweet->{text} );
 }
