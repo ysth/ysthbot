@@ -21,10 +21,10 @@ sub said {
 
     my $url = sprintf($api_url, $tid);
 #    warn "get $url";
-    my $tweet_json = LWP::Simple::get( $url );
+    my $tweet_json = LWP::Simple::get( $url ) || return;
 #    warn $tweet_json;
 
-    my $tweet = JSON::XS::decode_json( $tweet_json );
+    my $tweet = eval { JSON::XS::decode_json( $tweet_json ) } || return;
 
     return sprintf( $response, $tweet->{user}{screen_name}, $tweet->{text} );
 }
