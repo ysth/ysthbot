@@ -20,7 +20,7 @@ sub said {
     return unless my($user,$tid) = ($body =~ m{https?://twitter.com/\#!/([^/]+)/status/(\d+)});
 
     my $url = sprintf($api_url, $tid);
-#    warn "get $url";
+#    warn "curl '$url'";
     my $tweet_json = LWP::Simple::get( $url ) || return;
 #    warn $tweet_json;
 
