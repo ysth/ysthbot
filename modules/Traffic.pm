@@ -79,8 +79,8 @@ sub help {
         # pattern, replacement, exact only
         [ q/\bblocking\b/, 'blogging', ],
         [ q/\bplan accordingly\b/, 'play accordion', ],
-        [ q/\broadwork\b/, 'men at work', ],
-        [ q/\bmaintenance\b/, 'men at work', ],
+        [ q/\broadwork\b/, 'Men at Work', ],
+        [ q/\bmaintenance\b/, 'Men at Work', ],
         [ q/\bverified with camera\b/, 'verified with Gamera' ],
     );
 
