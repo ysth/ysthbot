@@ -1,0 +1,10 @@
+#!/usr/bin/perl -w
+close(STDIN);
+open(STDIN, "< /dev/null");
+close(STDOUT);
+open(STDOUT, ">> /home/ysth/infobot/nohuppl2.out");
+close(STDERR);
+open(STDERR, ">> /home/ysth/infobot/nohuppl2.out");
+print "pid: $$\n";
+$ENV{PERL5LIB} = 'lib';
+exec "/home/ysth/perl/bin/infobot infobotpl.conf";
