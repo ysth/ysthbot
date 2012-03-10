@@ -14,41 +14,26 @@ sub _get_incidents {
     # TODO: If-Modified-Since
     my $report = get("http://www.wsdot.wa.gov/traffic/seattle/incidents/");
 
-    ($report) = $report =~ m!(<p>Seattle area alerts for .*?)</div>!s
+    ($report) = $report =~ m!(Seattle area alerts.*?)(?=<p>)!si
         or return "traffic parse error: incidents not found";
 
-	my ($title,@types) = $report =~ m!<p[^>]*>([^<]*)</p>!gs;
+    $report =~ s/<[^>]+>//g;  # strip tags
+    $report =~ s/(Area) (Alerts)/$1 Traffic $2/;
+    $report =~ s/^\s*(?:\n|\z)//mg;   # strip "empty" lines
+    $report =~ s/^\t{3,}//mg;
+    $report =~ s/^\s+/  * /mg;
 
-	$title =~ s/(area) (alerts)/$1 traffic $2/;
-
-	my %reports;
-	for my $list ( $report =~ m!<ul>(.*?)</ul>!gs ) {
-		my $type = shift @types; # pull off the first type
-		my @incidents = $list =~ m!<li>(.*?)</li>!gs;
-		next if $incidents[0] eq 'None reported';
-		$reports{$type} = \@incidents;
-		push @types, $type;      # push it back on to the list
-	}
-
-	# make a report kind of like so:
-	# Seattle area traffic reports for MM/DD/YYY HH:MM AMPM
-	# Blocking Incidents
-	#   * None reported
-	# Construction Closures
-	#   * US99 viaduct closed
-	# Special Events
-	#   * OMG! IT'S THE MARINERS! RUN FOR YOUR LIVES!
-	my $msg = (keys %reports)
-		? join("\n", $title,  map { $_, map { '  * '.$_ } @{ $reports{$_} } } @types )
-		: "$title\nNothing to report";
+    if ( 3 == (()=($report =~ /None reported/mg)) ) {
+        $report =~ s/\n.*/\n  * Nothing to report/sm;
+    }
 
 	if ($explicit) {
 		for my $swap ( _get_swaps() ) {
-			$msg =~ s/$swap->{'pattern'}/$swap->{'replacement'}/g
+			$report =~ s/$swap->{'pattern'}/$swap->{'replacement'}/g
 		}
 	}
 
-    return $msg;
+    return $report;
 }
 
 sub _next_alert {
@@ -94,8 +79,8 @@ sub help {
         # pattern, replacement, exact only
         [ q/\bblocking\b/, 'blogging', ],
         [ q/\bplan accordingly\b/, 'play accordion', ],
-        [ q/\broadwork\b/, 'men at work', ],
-        [ q/\bmaintenance\b/, 'men at work', ],
+        [ q/\broadwork\b/, 'Men at Work', ],
+        [ q/\bmaintenance\b/, 'Men at Work', ],
         [ q/\bverified with camera\b/, 'verified with Gamera' ],
     );
 
