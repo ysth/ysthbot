@@ -17,11 +17,11 @@ sub _get_incidents {
     ($report) = $report =~ m!(Seattle area alerts.*?)(?=<p>)!si
         or return "traffic parse error: incidents not found";
 
-    $report =~ s/<[^>]+>//g;  # strip tags
+    $report =~ s/<li>/  * /mg;        # put a bullet in front of all list items
+    $report =~ s/<[^>]+>//g;          # strip tags
     $report =~ s/(Area) (Alerts)/$1 Traffic $2/;
+    $report =~ s/^\t+//mg;            # strip leading tabs
     $report =~ s/^\s*(?:\n|\z)//mg;   # strip "empty" lines
-    $report =~ s/^\t{3,}//mg;
-    $report =~ s/^\s+/  * /mg;
 
     if ( 3 == (()=($report =~ /None reported/mg)) ) {
         $report =~ s/\n.*/\n  * Nothing to report/sm;
