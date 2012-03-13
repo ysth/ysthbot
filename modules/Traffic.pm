@@ -22,10 +22,13 @@ sub _get_incidents {
     $report =~ s/(Area) (Alerts)/$1 Traffic $2/;
     $report =~ s/^\t+//mg;            # strip leading tabs
     $report =~ s/^\s*(?:\n|\z)//mg;   # strip "empty" lines
+    $report =~ s/\r//g;
 
-    if ( 3 == (()=($report =~ /None reported/mg)) ) {
-        $report =~ s/\n.*/\n  * Nothing to report/sm;
-    }
+    # omit "None reported" sections
+    $report =~ s/^(?:Blocking|Construction|Special).*\n\s+\* None reported\n//mg;
+
+    # nothing left?
+    $report .= '  * Nothing to report' if $report !~ /\*/;
 
     if ($explicit) {
         for my $swap ( _get_swaps() ) {
