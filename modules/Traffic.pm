@@ -27,11 +27,11 @@ sub _get_incidents {
         $report =~ s/\n.*/\n  * Nothing to report/sm;
     }
 
-	if ($explicit) {
-		for my $swap ( _get_swaps() ) {
-			$report =~ s/$swap->{'pattern'}/$swap->{'replacement'}/g
-		}
-	}
+    if ($explicit) {
+        for my $swap ( _get_swaps() ) {
+            $report =~ s/$swap->{'pattern'}/$swap->{'replacement'}/g
+        }
+    }
 
     return $report;
 }
