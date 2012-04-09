@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use LWP::Simple "get";
 use Time::Local "timelocal";
+use HTML::Entities "decode_entities";
 
 use Bot::BasicBot::Pluggable::Module;
 BEGIN { our @ISA = qw(Bot::BasicBot::Pluggable::Module); }
@@ -29,6 +30,8 @@ sub _get_incidents {
 
     # nothing left?
     $report .= '  * Nothing to report' if $report !~ /\*/;
+
+    decode_entities($report);
 
     if ($explicit) {
         for my $swap ( _get_swaps() ) {
