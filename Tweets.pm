@@ -7,8 +7,6 @@ use base qw(Bot::BasicBot::Pluggable::Module);
 use LWP::Simple ();
 use JSON::XS ();
 
-my $api_url = 'http://api.twitter.com/1/statuses/show.json?id=%d';
-my $response = '@%s: %s';
 sub said {
     my ($self, $mess, $pri) = @_;
 
@@ -17,13 +15,22 @@ sub said {
 
 #    warn "$who said $body with priority $pri\n";
     return unless ($pri == 2);
-    return unless my($user,$tid) = ($body =~ m{https?://twitter.com/\#!/([^/]+)/status/(\d+)});
 
-    my $url = sprintf($api_url, $tid);
+    if (my($user,$tid) = ($body =~ m{https?://twitter.com/\#!/([^/]+)/status/(\d+)})) {
+        return _single_status($user, $tid);
+    }
+    else {
+        return;
+    }
+}
+
+sub _single_status {
+    my($username,$id) = @_;
 
     my $response = '@%s: %s';
 
-    my $tweet = _fetch( $url );
+    my $uri = 'http://api.twitter.com/1/statuses/show.json?id=%d';
+    my $tweet = _fetch( sprintf( $uri, $id ) );
 
     return sprintf( $response, $tweet->{user}{screen_name}, $tweet->{text} );
 }
