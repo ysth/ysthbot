@@ -19,6 +19,9 @@ sub said {
     if (my($user,$tid) = ($body =~ m{https?://twitter.com/\#!/([^/]+)/status/(\d+)})) {
         return _single_status($user, $tid);
     }
+    elsif (($user) = ($body =~ m{https?://twitter.com/\#!/([^/]+)$})) {
+        return _tweet_stream($user,5);
+    }
     else {
         return;
     }
@@ -35,6 +38,23 @@ sub _single_status {
     return sprintf( $response, $tweet->{user}{screen_name}, $tweet->{text} );
 }
 
+sub _tweet_stream {
+    my($username,$count) = @_;
+    my $uri = 'http://api.twitter.com/1/statuses/user_timeline.json?screen_name=%s&count=%d';
+    my $stream = _fetch( sprintf( $uri, $username, $count ) );
+
+    return unless $stream;
+
+    my $response = join "\n",
+       map {
+           sprintf('[%s] @%s: %s',
+               _time( $_->{created_at} ), $username, $_->{text}
+           )
+       } @$stream;
+
+    return $response;
+}
+
 sub _fetch {
     my($url) = @_;
 #    warn "get $url";
@@ -42,6 +62,31 @@ sub _fetch {
 #    warn $tweet_json;
 
     return eval { JSON::XS::decode_json( $resp_json ) };
+}
+
+my %month = (
+    Jan => 1,
+    Feb => 2,
+    Mar => 3,
+    Apr => 4,
+    May => 5,
+    Jun => 6,
+    Jul => 7,
+    Aug => 8,
+    Sep => 9,
+    Oct => 10,
+    Nov => 11,
+    Dec => 12,
+);
+
+sub _time {
+    my ($created) = @_;
+
+    my($dow,$mon,$dom,$h,$m,$s,$offset,$year) =
+            ($created =~ /^(\w+) (\w+) (\d+) (\d+):(\d+):(\d+) ([+-]\d+) (\d+)$/);
+
+#    warn "month: $mon => $month{$mon}\n";
+    return sprintf('%04d/%02d/%02d %02d:%02d:%02d',$year,$month{$mon},$dom,$h,$m,$s);
 }
 
 sub help {
