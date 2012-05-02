@@ -33,7 +33,7 @@ sub _single_status {
     my $response = '@%s: %s';
 
     my $uri = 'http://api.twitter.com/1/statuses/show.json?id=%d';
-    my $tweet = _fetch( sprintf( $uri, $id ) );
+    my $tweet = _fetch( sprintf( $uri, $id ) ) || return;
 
     return sprintf( $response, $tweet->{user}{screen_name}, $tweet->{text} );
 }
