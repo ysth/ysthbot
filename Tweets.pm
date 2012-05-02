@@ -20,13 +20,21 @@ sub said {
     return unless my($user,$tid) = ($body =~ m{https?://twitter.com/\#!/([^/]+)/status/(\d+)});
 
     my $url = sprintf($api_url, $tid);
-#    warn "curl '$url'";
-    my $tweet_json = LWP::Simple::get( $url ) || return;
-#    warn $tweet_json;
 
-    my $tweet = eval { JSON::XS::decode_json( $tweet_json ) } || return;
+    my $response = '@%s: %s';
+
+    my $tweet = _fetch( $url );
 
     return sprintf( $response, $tweet->{user}{screen_name}, $tweet->{text} );
+}
+
+sub _fetch {
+    my($url) = @_;
+#    warn "get $url";
+    my $resp_json = LWP::Simple::get( $url );
+#    warn $tweet_json;
+
+    return eval { JSON::XS::decode_json( $resp_json ) };
 }
 
 sub help {
