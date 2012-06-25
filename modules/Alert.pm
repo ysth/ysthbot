@@ -16,7 +16,7 @@ sub _get_alerts {
     my $dir = $self->get("user_directory");
     return if $dir =~ /[^\w\/]/;
 
-    chomp( my @files = `ls -t $dir` );
+    chomp( my @files = `ls -rt $dir` );
     if (@files) {
     	my $prefix = $self->get("user_message_prefix") || '';
 	$prefix .= ' ' if $prefix;
