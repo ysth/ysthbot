@@ -40,9 +40,9 @@ sub said {
 
     my $body = $mess->{body};
  
-	return unless defined $body;
+    return unless defined $body;
     return if $body =~ /phobos.apple.com/;   
-    return unless $body =~ m!(http://\S+)!;
+    return unless $body =~ m!(https?://\S+)!;
     return unless length($1) > $self->get("user_max_length");
     my $long = $1;
     my $short = $long;
@@ -53,6 +53,7 @@ sub said {
     return unless length($short) < length($long);
     return unless $short;
 
+    $long =~ s{^https?://plus\.google\.com/\K#}{};
     my $title = $body !~ /spoiler/ && title($long);
     
     $self->{Bot}->reply($mess, "urgh. long url. Try $short".($title && " [ $title ]"));

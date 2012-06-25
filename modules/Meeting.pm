@@ -25,10 +25,16 @@ sub tick {
     my $self = shift;
     my $meeting = $self->get("user_meeting_time");
     return unless $meeting && $meeting > time();
+    my @channels = split /,/, $self->get("user_meeting_announce_channels") || '';
+    return unless @channels;
     my $log = int(log($meeting-time())/log(2));
 
     if ($log != $last_log) {
-        $self->say(channel => "#spqr", body => $self->get("user_meeting_name") . " in " . ($meeting-time()) . " seconds" ) if $last_log != -1;
+        if ($last_log != -1) {
+            for my $channel (@channels) {
+                $self->say(channel => $channel, body => $self->get("user_meeting_name") . " in " . ($meeting-time()) . " seconds" ) if $last_log != -1;
+            }
+        }
         $last_log = $log;
     }
     return;

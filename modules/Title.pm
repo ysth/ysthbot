@@ -35,8 +35,9 @@ sub said {
     my $reply = "";
     for (URI::Find::Simple::list_uris($mess->{body})) {
       next if $maxlen && $maxlen < length; 
+      s{https?://plus\.google\.com/\K#}{};
       my $title = title($_);
-      $reply .= "[ $title ] " if $title;
+      $reply .= "[ $title ] " if $title && $title ne "Twitter" && $title ne "Google";
     }
     $self->reply($mess, $reply) if $reply;
 
