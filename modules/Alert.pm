@@ -25,6 +25,8 @@ sub _get_alerts {
 	unlink @files;
     }
 
+    chomp(@alerts);
+
     return @alerts
 }
 
